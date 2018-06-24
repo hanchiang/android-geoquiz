@@ -15,6 +15,7 @@ public class QuizActivity extends AppCompatActivity {
     private static final String KEY_INDEX = "index";
     private static final int REQUEST_CODE_CHEAT = 0;
     private static final String QUESTION_CHEATED = "question_cheated";
+    private static final String CHEAT_COUNT = "com.example.han.geoquiz.cheat_count";
 
     // Layout views
     private Button mTrueButton;
@@ -33,10 +34,13 @@ public class QuizActivity extends AppCompatActivity {
             new Question(R.string.question_asia, true)
     };
 
+    private int mCurrentIndex = 0;
+
     private boolean[] mQuestionAnswered = new boolean[mQuestionBank.length];
     private boolean[] mQuestionCheated = new boolean[mQuestionBank.length];
+    private int mCheatCount = 0;
 
-    private int mCurrentIndex = 0;
+
     private int numQuestionsAnswered = 0;
     private int numQuestionsCorrect = 0;
     private double score = 0.0;
@@ -95,6 +99,7 @@ public class QuizActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
             mQuestionCheated = (boolean []) savedInstanceState.getSerializable(QUESTION_CHEATED);
+            mCheatCount = savedInstanceState.getInt(CHEAT_COUNT);
         }
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -155,7 +160,7 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Start CheatActivity
                 boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
-                Intent intent = CheatActivity.newIntent(QuizActivity.this, answerIsTrue);
+                Intent intent = CheatActivity.newIntent(QuizActivity.this, answerIsTrue, mCheatCount );
                 startActivityForResult(intent, REQUEST_CODE_CHEAT);
             }
         });
@@ -173,6 +178,9 @@ public class QuizActivity extends AppCompatActivity {
                 return;
             }
             mQuestionCheated[mCurrentIndex] = CheatActivity.wasAnswerShown(data);
+            if (mQuestionCheated[mCurrentIndex]) {
+                mCheatCount++;
+            }
         }
     }
 
@@ -200,6 +208,7 @@ public class QuizActivity extends AppCompatActivity {
         Log.i(TAG, "onSaveInstanceState");
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
         savedInstanceState.putSerializable(QUESTION_CHEATED, mQuestionCheated);
+        savedInstanceState.putInt(CHEAT_COUNT, mCheatCount);
     }
 
     @Override

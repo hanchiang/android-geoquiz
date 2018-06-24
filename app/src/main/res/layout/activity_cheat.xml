@@ -30,4 +30,20 @@
         android:text="@string/show_answer_button"
         />
 
+    <TextView
+        android:id="@+id/cheat_remaining_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        tools:text="Cheats remaining: 3"
+        />
+
+    <TextView
+        android:id="@+id/device_api_level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        tools:text="API Level"
+        />
+
 </LinearLayout>
