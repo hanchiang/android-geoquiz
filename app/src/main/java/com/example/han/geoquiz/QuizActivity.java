@@ -1,6 +1,5 @@
 package com.example.han.geoquiz;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,9 +13,8 @@ import android.widget.Toast;
 public class QuizActivity extends AppCompatActivity {
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
-    private static final String EXTRA_ANSWER_IS_TRUE = "com.example.han.geoquiz.answer_is_true";
     private static final int REQUEST_CODE_CHEAT = 0;
-    private static final String EXTRA_ANSWER_SHOWN = "com.example.han.geoquiz.answer_shown";
+    private static final String QUESTION_CHEATED = "question_cheated";
 
     // Layout views
     private Button mTrueButton;
@@ -44,12 +42,6 @@ public class QuizActivity extends AppCompatActivity {
     private double score = 0.0;
 
     // Methods
-    public static Intent newIntent(Context packageContext, boolean answerIsTrue) {
-        Intent intent = new Intent(packageContext, CheatActivity.class);
-        intent.putExtra(EXTRA_ANSWER_IS_TRUE, answerIsTrue);
-        return intent;
-    }
-
     private void updateQuestion() {
         Log.d(TAG, "Updating question text");
         // Log.d(TAG, "Updating question text", new Exception());
@@ -102,6 +94,7 @@ public class QuizActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            mQuestionCheated = (boolean []) savedInstanceState.getSerializable(QUESTION_CHEATED);
         }
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -162,7 +155,7 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Start CheatActivity
                 boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
-                Intent intent = QuizActivity.newIntent(QuizActivity.this, answerIsTrue);
+                Intent intent = CheatActivity.newIntent(QuizActivity.this, answerIsTrue);
                 startActivityForResult(intent, REQUEST_CODE_CHEAT);
             }
         });
@@ -206,6 +199,7 @@ public class QuizActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
         Log.i(TAG, "onSaveInstanceState");
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+        savedInstanceState.putSerializable(QUESTION_CHEATED, mQuestionCheated);
     }
 
     @Override
